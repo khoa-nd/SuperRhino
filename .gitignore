@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 
+# local migration scripts (contain credentials)
+supabase/migrate.js
+screenshots/
+specs/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

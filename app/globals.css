@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy-950: #0a1628;
+  --color-navy-900: #0d1f3c;
+  --color-navy-800: #142850;
+  --color-navy-700: #1b3464;
+  --color-navy-600: #234278;
+  --color-gold-500: #d4a853;
+  --color-gold-400: #e0be6a;
+  --color-gold-300: #ecd387;
+  --color-gold-200: #f5e6b8;
+  --color-gold-100: #faf3dc;
+  --color-surface: #0f1d36;
+  --color-surface-elevated: #152444;
+  --color-surface-card: #1a2d52;
+  --color-surface-hover: #1f3460;
+  --color-text-primary: #f0f2f5;
+  --color-text-secondary: #8899b4;
+  --color-text-muted: #5c6f8c;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-accent: #ffd23f;
+  --color-logo: #ffd23f;
+
+  --font-display: var(--font-barlow);
+  --font-body: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #0a1628;
+  --foreground: #f0f2f5;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@utility animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@utility animate-scale-in {
+  animation: scaleIn 0.25s ease-out;
+}
+
+@utility animate-celebrate {
+  animation: celebrate 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes celebrate {
+  0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
