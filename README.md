@@ -1,4 +1,4 @@
-# 🦏 SuperRhino
+# ![SuperRhino](https://super-rhino.vercel.app/_next/image?url=%2Flogo-256.png&w=128&q=75) SuperRhino
 
 **Family Task Tracker** — Stay organized, build streaks, and keep your family accountable together.
 
