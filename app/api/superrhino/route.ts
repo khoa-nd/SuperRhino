@@ -1,11 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+function getSupabaseUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    ""
+  );
+}
+
+function getSupabaseKey(): string {
+  return (
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    ""
+  );
+}
 
 function getClient() {
-  return createClient(supabaseUrl, supabaseKey);
+  const url = getSupabaseUrl();
+  const key = getSupabaseKey();
+  if (!url) throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set");
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set. Add it in Vercel → Settings → Environment Variables");
+  return createClient(url, key);
 }
 
 async function hashPassword(password: string): Promise<string> {
@@ -528,8 +546,9 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("API error:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { success: false, error: "Internal server error" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
