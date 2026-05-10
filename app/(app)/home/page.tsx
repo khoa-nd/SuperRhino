@@ -12,6 +12,7 @@ import { StreakCounter } from "@/components/StreakCounter";
 import { AssignmentCard } from "@/components/AssignmentCard";
 import { TaskCard } from "@/components/TaskCard";
 import { CancelDialog } from "@/components/CancelDialog";
+import { VoiceTaskButton } from "@/components/VoiceTaskButton";
 import { EmptyState } from "@/components/EmptyState";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 import { showToast } from "@/components/Toast";
@@ -23,6 +24,7 @@ export default function HomePage() {
   const { profile, family, logout } = useAuthStore();
   const tasks = useTaskStore((s) => s.tasks);
   const assignments = useTaskStore((s) => s.assignments);
+  const addTask = useTaskStore((s) => s.addTask);
   const updateAssignmentStatus = useTaskStore((s) => s.updateAssignmentStatus);
   const cancelTask = useTaskStore((s) => s.cancelTask);
   const rejectAssignment = useTaskStore((s) => s.rejectAssignment);
@@ -142,6 +144,29 @@ export default function HomePage() {
   const handleLogout = () => {
     logout();
     router.push("/");
+  };
+
+  const handleVoiceTask = async (title: string) => {
+    try {
+      const hue = Math.floor(Math.random() * 360);
+      await addTask({
+        name: title,
+        emoji: "🎙️",
+        credits: 3,
+        category: "personal",
+        requires_verification: false,
+        visibility: "private",
+        due_date: null,
+        priority: "medium",
+        color: `oklch(0.65 0.15 ${hue})`,
+        family_id: family?.id || "",
+        created_by: profile.id,
+        assignee_id: profile.id,
+      });
+      showToast(`Task created: "${title}" — edit it in Tasks tab`);
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Failed to create task", "error");
+    }
   };
 
   return (
@@ -283,6 +308,11 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* Voice Task Button — centered above bottom nav */}
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30">
+        <VoiceTaskButton onCreateTask={handleVoiceTask} />
+      </div>
 
       {/* Cancel/reject dialogs */}
       <CancelDialog

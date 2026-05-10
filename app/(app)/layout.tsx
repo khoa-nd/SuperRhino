@@ -12,17 +12,17 @@ import { useCreditStore } from "@/stores/creditStore";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, profile, family } = useAuthStore();
+  const { isLoggedIn, profile, family, _hydrated } = useAuthStore();
   const fetchTasks = useTaskStore((s) => s.fetchTasks);
   const fetchAssignments = useTaskStore((s) => s.fetchAssignments);
   const fetchMembers = useFamilyStore((s) => s.fetchMembers);
   const fetchCredits = useCreditStore((s) => s.fetchCredits);
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (_hydrated && !isLoggedIn) {
       router.push("/");
     }
-  }, [isLoggedIn, router]);
+  }, [_hydrated, isLoggedIn, router]);
 
   useEffect(() => {
     if (isLoggedIn && profile && family) {

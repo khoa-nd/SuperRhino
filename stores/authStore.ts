@@ -8,6 +8,7 @@ interface AuthState {
   family: Family | null;
   isLoggedIn: boolean;
   loading: boolean;
+  _hydrated: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (params: {
     username: string; displayName: string; password: string;
@@ -24,6 +25,7 @@ export const useAuthStore = create<AuthState>()(
       family: null,
       isLoggedIn: false,
       loading: false,
+      _hydrated: false,
 
       login: async (username, password) => {
         set({ loading: true });
@@ -62,6 +64,13 @@ export const useAuthStore = create<AuthState>()(
 
       updateFamily: (family) => set({ family }),
     }),
-    { name: "superrhino-auth" }
+    {
+      name: "superrhino-auth",
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          useAuthStore.setState({ _hydrated: true });
+        }
+      },
+    }
   )
 );
