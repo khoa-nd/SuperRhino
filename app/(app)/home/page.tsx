@@ -12,12 +12,13 @@ import { StreakCounter } from "@/components/StreakCounter";
 import { AssignmentCard } from "@/components/AssignmentCard";
 import { TaskCard } from "@/components/TaskCard";
 import { CancelDialog } from "@/components/CancelDialog";
+import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { VoiceTaskButton } from "@/components/VoiceTaskButton";
 import { EmptyState } from "@/components/EmptyState";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 import { showToast } from "@/components/Toast";
-import { LogOut, ShieldCheck, AlertTriangle } from "lucide-react";
-import type { Task } from "@/lib/types";
+import { LogOut, ShieldCheck, AlertTriangle, Plus } from "lucide-react";
+import type { Task, TaskCategory, TaskPriority } from "@/lib/types";
 
 export default function HomePage() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function HomePage() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [cancellingTask, setCancellingTask] = useState<Task | null>(null);
   const [rejectingAssignmentId, setRejectingAssignmentId] = useState<string | null>(null);
+  const [showNewTask, setShowNewTask] = useState(false);
 
   if (!profile) return null;
 
@@ -169,6 +171,34 @@ export default function HomePage() {
     }
   };
 
+  const handleCreateTask = async (data: {
+    name: string; emoji: string; credits: number;
+    category: TaskCategory; requires_verification: boolean;
+    visibility: "private" | "shared"; due_date: string | null;
+    priority: TaskPriority;
+  }) => {
+    try {
+      const hue = Math.floor(Math.random() * 360);
+      await addTask({
+        name: data.name,
+        emoji: data.emoji,
+        credits: data.credits,
+        category: data.category,
+        requires_verification: data.requires_verification,
+        visibility: data.visibility,
+        due_date: data.due_date,
+        priority: data.priority,
+        color: `oklch(0.65 0.15 ${hue})`,
+        family_id: family?.id || "",
+        created_by: profile.id,
+        assignee_id: profile.id,
+      });
+      showToast("Task created!");
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Failed", "error");
+    }
+  };
+
   return (
     <div className="px-4 py-6">
       {/* Header */}
@@ -200,6 +230,12 @@ export default function HomePage() {
             {streak && <StreakCounter current={streak.current_count} longest={streak.longest_count} />}
           </div>
         </div>
+        <button
+          onClick={() => setShowNewTask(true)}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gold-500 text-navy-950 font-bold text-sm hover:bg-gold-400 transition-colors flex-shrink-0"
+        >
+          <Plus size={18} /> New Task
+        </button>
       </div>
 
       {/* Overdue Tasks — highlighted section */}
@@ -308,6 +344,13 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* New Task Dialog */}
+      <TaskFormDialog
+        open={showNewTask}
+        onClose={() => setShowNewTask(false)}
+        onSave={handleCreateTask}
+      />
 
       {/* Voice Task Button — centered above bottom nav */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30">
